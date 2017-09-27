@@ -8,7 +8,19 @@
 </head>
 
 <body>
+
   <div class="container">
+
+    <div><a href="/products">/products</a></div>
+    <div><a href="/faker">/faker</a></div>
+    <div><a href="/clear">/clear</a></div>
+
+    <div>
+      <ul class="pagination">
+        <%- createPagination(pages,current)  %>
+      </ul>
+    </div>
+
     <div class="row">
       <% for (var i = 0; i < products.length; i++) { %>
         <div class="col-md-4">
@@ -31,11 +43,6 @@
     </div>
 
 
-    <div>
-      <ul class="pagination">
-        <%- createPagination2(pages,current)  %>
-      </ul>
-    </div>
 
   </div>
 </body>

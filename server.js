@@ -3,7 +3,9 @@ var ejs = require('ejs')
 var mongoose = require('mongoose')
 var bodyParser = require('body-parser')
 var mainRoutes = require('./routes/main')
-var helpers = require('node-view-helpers')
+// var helpers = require('node-view-helpers')
+var url = require('url')
+var qs = require('querystring')
 
 var path = require('path');
 
@@ -22,50 +24,67 @@ app.set('view engine', 'ejs')
 
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use(helpers('pagination')) // make sure you declare this middleware after `connect-flash` and `express.session` middlewares and before `express.router`.
+// app.use(helpers('pagination')) // make sure you declare this middleware after `connect-flash` and `express.session` middlewares and before `express.router`.
 
 app.use(function (req, res, next) {
-    res.locals.createPagination2 = function (pages, current) {
+    res.locals.createPagination = function (pages, current) {
+        var params = qs.parse(url.parse(req.url).query)
         var str = ''
-
+        current = Number(current)
+        pages = pages > 0 ? pages : 1
+    
+        var beforeAfter = 3
+        
         if (current == 1) {
-            // str += '<li class="disabled"><a>First</a></li>'
-            str += '<li class="disabled"><a>1</a></li>'
+          str += '<li class="active"><a>1</a></li>'
         } else {
-            // str += '<li><a href="/products/1">First</a></li>'
-            str += '<li><a href="/products/1">1</a></li>'
+          params.page = 1
+          var href = '?' + qs.stringify(params)
+          str += '<li><a href="' + href + '">1</a></li>'
         }
-
-        var i = (Number(current) > 5 ? Number(current) - 4 + 1 : 2)
-        if (i !== 2) {
-            str += '<li class="disabled"><a>...</a></li>'
-        }
-        for (; i <= (Number(current) + 4) && i < pages; i++) {
-            if (i == current) {
-                str = str + '<li class="active"><a>' + i + '</a></li>'
-            } else {
-                str = str + '<li><a href="/products/' + i + ' ">' + i + '</a></li>'
-            }
-            if (i == Number(current) + 4 && i < pages) {
-                str = str + '<li class="disabled"><a>...</a></li>'
-            }
-        }
-
-        if (current == pages) {
-            str += '<li class="disabled"><a>' + pages + '</a></li>'
-            // str += '<li class="disabled"><a>Last</a></li>'
+    
+    
+        var i;
+        if (current - beforeAfter > 1 + 1) {
+          i = current - beforeAfter
+          str += '<li class="disabled"><a>...</a></li>'
         } else {
-            str += '<li><a href="/products/' + pages + '">' + pages + '</a></li>'
-            // str += '<li><a href="/products/' + pages + '">Last</a></li>'
+          i = 2
         }
-
+    
+        for (; i <= (current + beforeAfter) && i < pages; i++) {
+          if (i == current) {
+            str = str + '<li class="active"><a>' + i + '</a></li>'
+          } else {
+            params.page = i
+            var href = '?' + qs.stringify(params)
+            str += '<li><a href="' + href + '">' + i + '</a></li>'
+          }
+          
+        }
+    
+        if (pages > 1) {
+          if (current + beforeAfter < pages - 1) {
+            str = str + '<li class="disabled"><a>...</a></li>'
+          }
+    
+          if (current == pages) {
+            str += '<li class="active"><a>' + pages + '</a></li>'
+          } else {
+            params.page = pages
+            var href = '?' + qs.stringify(params)
+            str += '<li><a href="' + href + '">' + pages + '</a></li>'
+          }
+        }
+    
         return str
+    
     }
 
     next()
 })
 app.use(mainRoutes)
 
-app.listen(8080, function () {
-    console.log('Node.js listening on port ' + 8080)
+app.listen(3000, function () {
+    console.log('Node.js listening on port ' + 3000)
 })
