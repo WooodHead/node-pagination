@@ -35,8 +35,8 @@ app.use(function (req, res, next) {
             // str += '<li><a href="/products/1">First</a></li>'
             str += '<li><a href="/products/1">1</a></li>'
         }
-        
-        var i = (Number(current) > 5 ? Number(current) - 4 +1 : 2)
+
+        var i = (Number(current) > 5 ? Number(current) - 4 + 1 : 2)
         if (i !== 2) {
             str += '<li class="disabled"><a>...</a></li>'
         }
@@ -51,15 +51,13 @@ app.use(function (req, res, next) {
             }
         }
 
-        
         if (current == pages) {
-            str += '<li class="disabled"><a>'+pages+'</a></li>'
+            str += '<li class="disabled"><a>' + pages + '</a></li>'
             // str += '<li class="disabled"><a>Last</a></li>'
         } else {
-            str += '<li><a href="/products/'+pages+'">'+pages+'</a></li>'
+            str += '<li><a href="/products/' + pages + '">' + pages + '</a></li>'
             // str += '<li><a href="/products/' + pages + '">Last</a></li>'
         }
-
 
         return str
     }
